@@ -4,6 +4,7 @@ Installation
 **Download required libraries:**
 
  - [ESP8266wifi](https://github.com/ekstrand/ESP8266wifi) for server.
+ - *(Optionally, )* [ArduinoJson](https://github.com/bblanchon/ArduinoJson) for JSON responses.
 
 **Create `WiFi.h` with login information.**
 
