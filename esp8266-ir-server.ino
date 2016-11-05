@@ -4,12 +4,13 @@
 #include <ArduinoJson.h>
 #include <IRremoteESP8266.h>
 
-StaticJsonBuffer<200> jsonBuffer;
 ESP8266WebServer server(80);
 IRsend irsend(4);
 
 void sendSuccessfulResponse() {
+  StaticJsonBuffer<200> jsonBuffer;
   JsonObject& response = jsonBuffer.createObject();
+  
   response["success"] = true;
 
   char buffer[256];
@@ -19,7 +20,9 @@ void sendSuccessfulResponse() {
 }
 
 void sendFailedResponse(char* message, int code = 500) {
+  StaticJsonBuffer<200> jsonBuffer;
   JsonObject& response = jsonBuffer.createObject();
+  
   response["success"] = false;
   response["error"] = message;
 
@@ -61,9 +64,14 @@ void transmitIR(String command) {
 }
 
 void handleTV() {
-  String command = server.arg("command");
-  transmitIR(command);
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& request = jsonBuffer.parseObject(server.arg("plain"));
 
+  Serial.print("TV endpoint pinged with JSON: ");
+  request.printTo(Serial);
+  Serial.println();
+  
+  transmitIR(request["command"]);
   sendSuccessfulResponse();
 }
 

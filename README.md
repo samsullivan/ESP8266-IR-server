@@ -4,7 +4,7 @@ Installation
 **Download required libraries:**
 
  - [ESP8266wifi](https://github.com/ekstrand/ESP8266wifi) for server.
- - *(Optionally, )* [ArduinoJson](https://github.com/bblanchon/ArduinoJson) for JSON responses.
+ - [ArduinoJson](https://github.com/bblanchon/ArduinoJson) for JSON requests/responses.
  - [IRremoteESP8266](https://github.com/markszabo/IRremoteESP8266) for IR transmission.
 
 ---
