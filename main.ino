@@ -2,9 +2,11 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <ArduinoJson.h>
+#include <IRremoteESP8266.h>
 
 StaticJsonBuffer<200> jsonBuffer;
 ESP8266WebServer server(80);
+IRsend irsend(4);
 
 void sendSuccessfulResponse() {
   JsonObject& response = jsonBuffer.createObject();
@@ -37,6 +39,41 @@ void handle404() {
   sendFailedResponse("Page not found.", 404);
 }
 
+void transmitIR(String command) {
+  if(command == "power") {
+    irsend.sendNEC(0x20DF10EF, 40);
+  } else if(command == "input") {
+    irsend.sendNEC(0x20DFF40B, 40);
+  } else if(command == "play") {
+    irsend.sendNEC(0x20DFCC33, 40);
+  } else if(command == "pause") {
+    irsend.sendNEC(0x20DFEC13, 40);
+  } else if(command == "volume up") {
+    irsend.sendNEC(0x20DF40BF, 40);
+  } else if(command == "volume down") {
+    irsend.sendNEC(0x20DFC03F, 40);
+  } else if(command == "fast forward") {
+    irsend.sendNEC(0x20DFB748, 40);
+  } else if(command == "rewind") {
+    irsend.sendNEC(0x20DFAC53, 40);
+  } else {
+    sendFailedResponse("Invalid command for TV.");
+    return;
+  }
+}
+
+void handleTV() {
+  if(server.method() != HTTP_POST) {
+    handle404();
+    return;
+  }
+
+  String command = server.arg("command");
+  transmitIR(command);
+
+  sendSuccessfulResponse();
+}
+
 void setup() {
   Serial.begin(115200);
 
@@ -56,8 +93,11 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   server.on("/", handleRoot);
+  server.on("/tv", handleTV);
   server.onNotFound(handle404);
   server.begin();
+
+  irsend.begin();
 }
 
 void loop() {
