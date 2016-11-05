@@ -1,0 +1,13 @@
+Installation
+=
+
+**Download required libraries:**
+
+ - [ESP8266wifi](https://github.com/ekstrand/ESP8266wifi) for server.
+
+**Create `WiFi.h` with login information.**
+
+```
+$ cp WiFi.h.bak WiFi.h
+$ vi WiFi.h
+```
