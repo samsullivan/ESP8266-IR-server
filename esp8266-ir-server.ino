@@ -18,12 +18,10 @@ void sendSuccessfulResponse() {
   server.send(200, "application/json", buffer);
 }
 
-void sendFailedResponse(char* message = "", int code = 500) {
+void sendFailedResponse(char* message, int code = 500) {
   JsonObject& response = jsonBuffer.createObject();
   response["success"] = false;
-  if(sizeof(message)) {
-    response["error"] = message;
-  }
+  response["error"] = message;
 
   char buffer[256];
   response.printTo(buffer, sizeof(buffer));
@@ -63,11 +61,6 @@ void transmitIR(String command) {
 }
 
 void handleTV() {
-  if(server.method() != HTTP_POST) {
-    handle404();
-    return;
-  }
-
   String command = server.arg("command");
   transmitIR(command);
 
@@ -93,7 +86,7 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   server.on("/", handleRoot);
-  server.on("/tv", handleTV);
+  server.on("/tv", HTTP_POST, handleTV);
   server.onNotFound(handle404);
   server.begin();
 
